@@ -2,206 +2,301 @@
 PIC ASSEMBLER LISTING
 Line    Address Opcode  Instruction
 ---------------------------------------------
-0001    0000            
+0001    0000            ;;; 160 PASOS EN X
 0002    0000            DATO	EQU 0X21
 0003    0000            d1   	EQU 0X22
 0004    0000            d2	EQU 0X23
 0005    0000            d3	EQU 0X24
 0006    0000            d4	EQU 0x25
 0007    0000            d5	EQU 0X26
-0008    0000            INICIO
-0009    0000            	ORG	0X00
-0010    0000            
-0011    0000            
-0012    0000    1683    	BSF	STATUS, 5 ; Colocamos en 1 el bit 5 de reg. estatus 
-0013    0001            ; en el banco 1 tenemos trisa, trisb, ... , trisd
-0014    0001            ; debemos configurar puerto de entrada y salida..
-0015    0001            ; puerto b
-0016    0001    0186    	CLRF	TRISB		; CLEAR FILE CONFIGURA EL PUERTO B PARA QUE SEA SALIDA (0 = SALIDA)
-0017    0002    1787    	BSF TRISC, 7		; PUERTO C -> ENTRADA
-0018    0003    0188    	CLRF 	TRISD		; PUERTO D -> SALIDA
-0019    0004            
-0020    0004    1283    	BCF	STATUS, RP0		;BITCLEAR FILE DE RP0 = BIT CLEARFY 5
-0021    0005            	
-0022    0005    3000    	movlw 0x00;
-0023    0006    0086    	movwf	portb;
-0024    0007    3000    	movlw 0x00;
-0025    0008    0088    	movwf portd;
-0026    0009            
-0027    0009            
-0028    0009            START	
-0029    0009    2012    	CALL PASOADELANTE
-0030    000A    2062    	CALL MOVIMIENTOBDELANTE
-0031    000B    2012    	CALL PASOADELANTE
-0032    000C    2069    	CALL MOVIMIENTOBDETRAZ
-0033    000D    2012    	CALL PASOADELANTE
-0034    000E    2062    	CALL MOVIMIENTOBDELANTE
-0035    000F    2012    	CALL PASOADELANTE
-0036    0010    2069    	CALL MOVIMIENTOBDETRAZ
-0037    0011    2809    	GOTO START
-0038    0012            
-0039    0012            END
-0040    0012            
-0041    0012            
-0042    0012            
-0043    0012            
-0044    0012            
-0045    0012            
-0046    0012            
-0047    0012            PASOADELANTE
-0048    0012    2034    	CALL PASO1A
-0049    0013    2070    	CALL DELAY
-0050    0014    2038    	CALL PASO2A
-0051    0015    2070    	CALL DELAY
-0052    0016    203C    	CALL PASO3A
-0053    0017    2070    	CALL DELAY
-0054    0018    2040    	CALL PASO4A
-0055    0019    2070    	CALL DELAY
-0056    001A    0008    	RETURN	
-0057    001B            PASOAREVEZ
-0058    001B    2040    	CALL PASO4A
-0059    001C    2070    	CALL DELAY
-0060    001D    203C    	CALL PASO3A
-0061    001E    2070    	CALL DELAY
-0062    001F    2038    	CALL PASO2A
-0063    0020    2070    	CALL DELAY
-0064    0021    2034    	CALL PASO1A
-0065    0022    2070    	CALL DELAY
-0066    0023    0008    	RETURN	
-0067    0024            
-0068    0024            PASOBDELANTE
-0069    0024    2044    	CALL PASO1B
-0070    0025    2070    	CALL DELAY
-0071    0026    2048    	CALL PASO2B
-0072    0027    2070    	CALL DELAY
-0073    0028    204C    	CALL PASO3B
-0074    0029    2070    	CALL DELAY
-0075    002A    2050    	CALL PASO4B
-0076    002B    0008    	RETURN
-0077    002C            
-0078    002C            PASOBREVEZ
-0079    002C    2050    	CALL PASO4B
-0080    002D    2070    	CALL DELAY
-0081    002E    204C    	CALL PASO3B
-0082    002F    2070    	CALL DELAY
-0083    0030    2048    	CALL PASO2B
-0084    0031    2070    	CALL DELAY
-0085    0032    2044    	CALL PASO1B
-0086    0033    0008    	RETURN
-0087    0034            
-0088    0034            	
-0089    0034            PASO1A
-0090    0034    300C    	MOVLW	B'00001100' 	; EN W SE ENCUENTRA 0001100
-0091    0035    00A1    	MOVWF	DATO		; DE W A F LE MOVEMOS F
-0092    0036    2054    	CALL DISPLAYA
-0093    0037    0008    	RETURN
-0094    0038            PASO2A
-0095    0038    3006    	MOVLW	B'00000110' ; EN W SE ENCUENTRA 0001100
-0096    0039    00A1    	MOVWF	DATO		; DE W A F LE MOVEMOS F
-0097    003A    2054    	CALL DISPLAYA
-0098    003B    0008    	RETURN
-0099    003C            PASO3A
-0100    003C    3003    	MOVLW	B'00000011' ; EN W SE ENCUENTRA 0001100
-0101    003D    00A1    	MOVWF	DATO		; DE W A F LE MOVEMOS F
-0102    003E    2054    	CALL DISPLAYA
-0103    003F    0008    	RETURN
-0104    0040            PASO4A
-0105    0040    3009    	MOVLW	B'00001001' ; EN W SE ENCUENTRA 0001100
-0106    0041    00A1    	MOVWF	DATO		; DE W A F LE MOVEMOS F
-0107    0042    2054    	CALL DISPLAYA
-0108    0043    0008    	RETURN
-0109    0044            
-0110    0044            PASO1B
-0111    0044    300C    	MOVLW	B'00001100' ; EN W SE ENCUENTRA 0001100
-0112    0045    00A1    	MOVWF	DATO		; DE W A F LE MOVEMOS F
-0113    0046    2057    	CALL DISPLAYB
-0114    0047    0008    	RETURN
-0115    0048            PASO2B
-0116    0048    3006    	MOVLW	B'00000110' ; EN W SE ENCUENTRA 0001100
-0117    0049    00A1    	MOVWF	DATO		; DE W A F LE MOVEMOS F
-0118    004A    2057    	CALL DISPLAYB
-0119    004B    0008    	RETURN
-0120    004C            PASO3B
-0121    004C    3003    	MOVLW	B'00000011' ; EN W SE ENCUENTRA 0001100
-0122    004D    00A1    	MOVWF	DATO		; DE W A F LE MOVEMOS F
-0123    004E    2057    	CALL DISPLAYB
-0124    004F    0008    	RETURN
-0125    0050            PASO4B
-0126    0050    3009    	MOVLW	B'00001001' ; EN W SE ENCUENTRA 0001100
-0127    0051    00A1    	MOVWF	DATO		; DE W A F LE MOVEMOS F
-0128    0052    2057    	CALL DISPLAYB
-0129    0053    0008    	RETURN
-0130    0054            
-0131    0054            
-0132    0054            
-0133    0054            DISPLAYA
-0134    0054    0821    	MOVF	DATO, W
-0135    0055    0086    	MOVWF	PORTB	
-0136    0056    0008    	RETURN
-0137    0057            
-0138    0057            DISPLAYB
-0139    0057            	; Se limpia mitad de puertos inservibles
-0140    0057    1206    	BCF PORTB, 4
-0141    0058    1286    	BCF PORTB, 5
-0142    0059    1306    	BCF PORTB, 6
-0143    005A    1386    	BCF PORTB, 7
-0144    005B            
-0145    005B            		; jeje
-0146    005B            
-0147    005B    0DA1    	RLF DATO, 1
-0148    005C    0DA1    	RLF DATO, 1
-0149    005D    0DA1    	RLF DATO, 1
-0150    005E    0DA1    	RLF DATO, 1
-0151    005F            
-0152    005F    0821    	MOVF	DATO, W
-0153    0060    0486    	IORWF	PORTB, 1	; OR ENTRE DATO Y PUERTOB
-0154    0061            
-0155    0061    0008    	RETURN
-0156    0062            
-0157    0062            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-0158    0062            MOVIMIENTOBDELANTE
-0159    0062    300A    	movlw d'10'
-0160    0063    00A6    	movwf d5
-0161    0064            INICIOMOVIMIENTOA1
-0162    0064    0BA6    	decfsz d5, 1
-0163    0065    2867    	GOTO A1
-0164    0066    0008    	RETURN
-0165    0067            A1
-0166    0067    2024    	CALL PASOBDELANTE 	; 32 PASOS
-0167    0068    2864    	GOTO INICIOMOVIMIENTOA1
-0168    0069            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-0169    0069            MOVIMIENTOBDETRAZ
-0170    0069    300A    	movlw d'10'
-0171    006A    00A6    	movwf d5
-0172    006B            INICIOMOVIMIENTOA2
-0173    006B    0BA6    	decfsz d5, 1
-0174    006C    286E    	GOTO A2
-0175    006D    0008    	RETURN
-0176    006E            A2
-0177    006E    202C    	CALL PASOBREVEZ	; 32 PASOS
-0178    006F    286B    	GOTO INICIOMOVIMIENTOA2
-0179    0070            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-0180    0070            ;;;;;;;;;;;;;;;;;;
-0181    0070            
-0182    0070            	
-0183    0070            Delay
-0184    0070            			;1693 cycles
-0185    0070    3052    	movlw	0x52
-0186    0071    00A2    	movwf	d1
-0187    0072    3002    	movlw	0x02
-0188    0073    00A3    	movwf	d2
-0189    0074            Delay_0
-0190    0074    0BA2    	decfsz	d1, f
-0191    0075    2877    	goto	$+2
-0192    0076    0BA3    	decfsz	d2, f
-0193    0077    2874    	goto	Delay_0
-0194    0078            
-0195    0078            			;3 cycles
-0196    0078    2879    	goto	$+1
-0197    0079    0000    	nop
-0198    007A            
-0199    007A            			;4 cycles (including call)
-0200    007A    0008    	return
-0201    007B            ; Generated by http://w
+0008    0000            d6	EQU 0X27
+0009    0000            d7	EQU 0X28
+0010    0000            d8	EQU 0x29
+0011    0000            d9	EQU 0X2A
+0012    0000            x	EQU 0x2B
+0013    0000            y	EQU 0x2C
+0014    0000            x_f	EQU 0x2D
+0015    0000            y_f	EQU 0X2E
+0016    0000            cond_x	EQU 0x30
+0017    0000            cond_y	EQU 0x31
+0018    0000            d10	EQU 0x32
+0019    0000            d11	EQU 0x33
+0020    0000            INICIO
+0021    0000            	ORG	0X00
+0022    0000            
+0023    0000            
+0024    0000    1683    	BSF	STATUS, 5 ; Colocamos en 1 el bit 5 de reg. estatus 
+0025    0001            ; en el banco 1 tenemos trisa, trisb, ... , trisd
+0026    0001            ; debemos configurar puerto de entrada y salida..
+0027    0001            ; puerto b
+0028    0001    0186    	CLRF	TRISB		; CLEAR FILE CONFIGURA EL PUERTO B PARA QUE SEA SALIDA (0 = SALIDA)
+0029    0002    1787    	BSF TRISC, 7		; PUERTO C -> ENTRADA
+0030    0003    0188    	CLRF 	TRISD		; PUERTO D -> SALIDA
+0031    0004            
+0032    0004    1283    	BCF	STATUS, RP0		;BITCLEAR FILE DE RP0 = BIT CLEARFY 5
+0033    0005            	
+0034    0005    3000    	movlw 0x00;
+0035    0006    0086    	movwf	portb;
+0036    0007    3000    	movlw 0x00;
+0037    0008    0088    	movwf portd;
+0038    0009            
+0039    0009            
+0040    0009            START
+0041    0009    300E    	movlw	d'14'
+0042    000A    00AD    	movwf	x_f
+0043    000B    300E    	movlw	d'14'
+0044    000C    00AE    	movwf	y_f
+0045    000D            	
+0046    000D    3000    	movlw   d'0'
+0047    000E    00AB    	movwf	x
+0048    000F    3000    	movlw	d'0'
+0049    0010    00AC    	movwf	y
+0050    0011    2018    	CALL Buscar_X
+0051    0012    2022    	CALL Buscar_Y
+0052    0013            HOLA
+0053    0013    2813    	GOTO HOLA
+0054    0014            
+0055    0014    2096    	CALL MovimientoDelanteCompleto
+0056    0015    20A2    	CALL MovimientoDetrazCompleto
+0057    0016    2018    	CALL Buscar_X
+0058    0017    28B6    	GOTO END
+0059    0018            
+0060    0018            	
+0061    0018            ;;;;;
+0062    0018            BUSCAR_X
+0063    0018    208E    	CALL MOVIMIENTOADELANTE
+0064    0019    0AAB    	INCF x, 1
+0065    001A    082D    	movf x_f, W
+0066    001B    00B3    	movwf d11
+0067    001C            INICIOBUSCAx
+0068    001C    0BB3    	decfsz d11, 1
+0069    001D    281F    	GOTO b13
+0070    001E    0008    	RETURN
+0071    001F            B13
+0072    001F    208E    	CALL MOVIMIENTOADELANTE		; 10 PASOADELANTE
+0073    0020    0AAB    	INCF x, 1	
+0074    0021    281C    	GOTO INICIOBUSCAx
+0075    0022            ;;;;
+0076    0022            ;;;;;
+0077    0022            BUSCAR_Y
+0078    0022    203E    	CALL PASOBDELANTE
+0079    0023    0AAC    	INCF Y, 1
+0080    0024    082E    	movf y_f, W
+0081    0025    00B2    	movwf d10
+0082    0026            INICIOBUSCAy
+0083    0026    0BB2    	decfsz d10, 1
+0084    0027    2829    	GOTO B14
+0085    0028    0008    	RETURN
+0086    0029            B14
+0087    0029    203E    	CALL PASOBDELANTE
+0088    002A    0AAC    	INCF Y, 1
+0089    002B    2826    	GOTO INICIOBUSCAy
+0090    002C            ;;;;
+0091    002C            
+0092    002C            
+0093    002C            
+0094    002C            PASOADELANTE
+0095    002C    204E    	CALL PASO1A
+0096    002D    20AB    	CALL DELAY
+0097    002E    2052    	CALL PASO2A
+0098    002F    20AB    	CALL DELAY
+0099    0030    2056    	CALL PASO3A
+0100    0031    20AB    	CALL DELAY
+0101    0032    205A    	CALL PASO4A
+0102    0033    20AB    	CALL DELAY
+0103    0034    0008    	RETURN	
+0104    0035            PASOAREVEZ
+0105    0035    205A    	CALL PASO4A
+0106    0036    20AB    	CALL DELAY
+0107    0037    2056    	CALL PASO3A
+0108    0038    20AB    	CALL DELAY
+0109    0039    2052    	CALL PASO2A
+0110    003A    20AB    	CALL DELAY
+0111    003B    204E    	CALL PASO1A
+0112    003C    20AB    	CALL DELAY
+0113    003D    0008    	RETURN	
+0114    003E            
+0115    003E            PASOBDELANTE
+0116    003E    205E    	CALL PASO1B
+0117    003F    20AB    	CALL DELAY
+0118    0040    2062    	CALL PASO2B
+0119    0041    20AB    	CALL DELAY
+0120    0042    2066    	CALL PASO3B
+0121    0043    20AB    	CALL DELAY
+0122    0044    206A    	CALL PASO4B
+0123    0045    0008    	RETURN
+0124    0046            
+0125    0046            PASOBREVEZ
+0126    0046    206A    	CALL PASO4B
+0127    0047    20AB    	CALL DELAY
+0128    0048    2066    	CALL PASO3B
+0129    0049    20AB    	CALL DELAY
+0130    004A    2062    	CALL PASO2B
+0131    004B    20AB    	CALL DELAY
+0132    004C    205E    	CALL PASO1B
+0133    004D    0008    	RETURN
+0134    004E            
+0135    004E            	
+0136    004E            PASO1A
+0137    004E    300C    	MOVLW	B'00001100' 	; EN W SE ENCUENTRA 0001100
+0138    004F    00A1    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0139    0050    206E    	CALL DISPLAYA
+0140    0051    0008    	RETURN
+0141    0052            PASO2A
+0142    0052    3006    	MOVLW	B'00000110' ; EN W SE ENCUENTRA 0001100
+0143    0053    00A1    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0144    0054    206E    	CALL DISPLAYA
+0145    0055    0008    	RETURN
+0146    0056            PASO3A
+0147    0056    3003    	MOVLW	B'00000011' ; EN W SE ENCUENTRA 0001100
+0148    0057    00A1    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0149    0058    206E    	CALL DISPLAYA
+0150    0059    0008    	RETURN
+0151    005A            PASO4A
+0152    005A    3009    	MOVLW	B'00001001' ; EN W SE ENCUENTRA 0001100
+0153    005B    00A1    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0154    005C    206E    	CALL DISPLAYA
+0155    005D    0008    	RETURN
+0156    005E            
+0157    005E            PASO1B
+0158    005E    300C    	MOVLW	B'00001100' ; EN W SE ENCUENTRA 0001100
+0159    005F    00A1     	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0160    0060    2071    	CALL DISPLAYB
+0161    0061    0008    	RETURN
+0162    0062            PASO2B
+0163    0062    3006    	MOVLW	B'00000110' ; EN W SE ENCUENTRA 0001100
+0164    0063    00A1    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0165    0064    2071    	CALL DISPLAYB
+0166    0065    0008    	RETURN
+0167    0066            PASO3B
+0168    0066    3003    	MOVLW	B'00000011' ; EN W SE ENCUENTRA 0001100
+0169    0067    00A1    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0170    0068    2071    	CALL DISPLAYB
+0171    0069    0008    	RETURN
+0172    006A            PASO4B
+0173    006A    3009    	MOVLW	B'00001001' ; EN W SE ENCUENTRA 0001100
+0174    006B    00A1    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0175    006C    2071    	CALL DISPLAYB
+0176    006D    0008    	RETURN
+0177    006E            
+0178    006E            
+0179    006E            
+0180    006E            DISPLAYA
+0181    006E    0821    	MOVF	DATO, W
+0182    006F    0086    	MOVWF	PORTB	
+0183    0070    0008    	RETURN
+0184    0071            
+0185    0071            DISPLAYB
+0186    0071            	; Se limpia mitad de puertos inservibles
+0187    0071    1206    	BCF PORTB, 4
+0188    0072    1286    	BCF PORTB, 5
+0189    0073    1306    	BCF PORTB, 6
+0190    0074    1386    	BCF PORTB, 7
+0191    0075            
+0192    0075            	
+0193    0075            	; Shift para colocar en parte más significativa
+0194    0075    0DA1    	RLF DATO, 1
+0195    0076    0DA1    	RLF DATO, 1
+0196    0077    0DA1    	RLF DATO, 1
+0197    0078    0DA1    	RLF DATO, 1
+0198    0079            
+0199    0079    0821    	MOVF	DATO, W
+0200    007A    0486    	IORWF	PORTB, 1 ; OR ENTRE DATO Y PUERTOB
+0201    007B    0008    	RETURN
+0202    007C            
+0203    007C            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0204    007C            MOVIMIENTOBDELANTE
+0205    007C    300A    	movlw d'10'
+0206    007D    00A6    	movwf d5
+0207    007E            INICIOMOVIMIENTOB1
+0208    007E    0BA6    	decfsz d5, 1
+0209    007F    2881    	GOTO B1
+0210    0080    0008    	RETURN
+0211    0081            B1
+0212    0081    203E    	CALL PASOBDELANTE 	; 32 PASOS
+0213    0082    203E    	CALL PASOBDELANTE
+0214    0083    0AAC    	INCF y, 1
+0215    0084    287E    	GOTO INICIOMOVIMIENTOB1
+0216    0085            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0217    0085            MOVIMIENTOBDETRAZ
+0218    0085    3005    	movlw d'5'
+0219    0086    00A7    	movwf d6
+0220    0087            INICIOMOVIMIENTOB2
+0221    0087    0BA7    	decfsz d6, 1
+0222    0088    288A    	GOTO B2
+0223    0089    0008    	RETURN
+0224    008A            B2
+0225    008A    2046    	CALL PASOBREVEZ	; 32 PASOS
+0226    008B    2046    	CALL PASOBREVEZ
+0227    008C    03AC    	DECF y, 1
+0228    008D    2887    	GOTO INICIOMOVIMIENTOB2
+0229    008E            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0230    008E            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0231    008E            MOVIMIENTOADELANTE
+0232    008E    3005    	movlw d'5'
+0233    008F    00A8    	movwf d7
+0234    0090            INICIOMOVIMIENTOA1
+0235    0090    0BA8    	decfsz d7, 1
+0236    0091    2893    	GOTO A1
+0237    0092    0008    	RETURN
+0238    0093            A1
+0239    0093    202C    	CALL PASOADELANTE	; 32 PASOS
+0240    0094    202C    	CALL PASOADELANTE
+0241    0095    2890    	GOTO INICIOMOVIMIENTOA1
+0242    0096            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0243    0096            MovimientoDelanteCompleto
+0244    0096    3011    	movlw d'17'
+0245    0097    00A9    	movwf d8
+0246    0098            INICIOMOVIMIENTOC1
+0247    0098    0BA9    	decfsz d8, 1
+0248    0099    289B    	GOTO C1
+0249    009A    0008    	RETURN
+0250    009B            C1
+0251    009B    208E    	CALL MOVIMIENTOADELANTE		; 10 PASOADELANTE
+0252    009C    0AAB    	INCF x, 1	
+0253    009D    207C    	CALL MOVIMIENTOBDELANTE
+0254    009E    208E    	CALL MOVIMIENTOADELANTE		; 10 PASOADELANTE
+0255    009F    0AAB    	INCF x, 1
+0256    00A0    2085    	CALL MOVIMIENTOBDETRAZ
+0257    00A1    2898    	GOTO INICIOMOVIMIENTOC1
+0258    00A2            
+0259    00A2            MovimientoDetrazCompleto
+0260    00A2    30FF    	movlw d'255'
+0261    00A3    00AA    	movwf d9
+0262    00A4            INICIOMOVIMIENTOD1
+0263    00A4    0BAA    	decfsz d9, 1
+0264    00A5    28A9    	GOTO MOVD1
+0265    00A6    3000    	MOVLW	B'0' 	; EN W SE ENCUENTRA 0
+0266    00A7    00AB    	MOVWF	x	; Movemos a x, w -> x = 0 (reseteamos x)
+0267    00A8            
+0268    00A8            
+0269    00A8    0008    	RETURN
+0270    00A9            MOVD1
+0271    00A9    2035    	CALL PASOAREVEZ			
+0272    00AA    28A4    	GOTO INICIOMOVIMIENTOD1		
+0273    00AB            
+0274    00AB            
+0275    00AB            	
+0276    00AB            Delay
+0277    00AB            			;1693 cycles
+0278    00AB    3052    	movlw	0x52
+0279    00AC    00A2    	movwf	d1
+0280    00AD    3002    	movlw	0x02
+0281    00AE    00A3    	movwf	d2
+0282    00AF            Delay_0
+0283    00AF    0BA2    	decfsz	d1, f
+0284    00B0    28B2    	goto	$+2
+0285    00B1    0BA3    	decfsz	d2, f
+0286    00B2    28AF    	goto	Delay_0
+0287    00B3            
+0288    00B3            			;3 cycles
+0289    00B3    28B4    	goto	$+1
+0290    00B4    0000    	nop
+0291    00B5            
+0292    00B5            			;4 cycles (including call)
+0293    00B5    0008    	return
+0294    00B6            ; Generated by http://w
+0295    00B6            
+0296    00B6            END
 ---------------------------------------------
 Number of errors = 0

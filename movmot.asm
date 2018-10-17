@@ -40,7 +40,7 @@ INICIO
 START
 	movlw	d'14'
 	movwf	x_f
-	movlw	d'14'
+	movlw	d'50'
 	movwf	y_f
 	
 	movlw   d'0'
@@ -76,6 +76,7 @@ B13
 ;;;;;
 BUSCAR_Y
 	CALL PASOBDELANTE
+	CALL PASOBDELANTE
 	INCF Y, 1
 	movf y_f, W
 	movwf d10
@@ -84,6 +85,7 @@ INICIOBUSCAy
 	GOTO B14
 	RETURN
 B14
+	CALL PASOBDELANTE
 	CALL PASOBDELANTE
 	INCF Y, 1
 	GOTO INICIOBUSCAy

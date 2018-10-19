@@ -25,6 +25,8 @@ dato2	EQU 0x37
 dato3	EQU 0X38
 dato4	EQU 0x39
 
+var2show EQU 0x40
+
 INICIO
 	ORG	0X00
 
@@ -80,6 +82,18 @@ START
 
 
 MENUBTN
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
 	BTFSS PORTD, 1	; VERIFICA SI BOTÓN ESTÁ PRESIONADO
 	GOTO MENUBTN		; SI NO ESTÁ PRESIONADO
 	
@@ -107,33 +121,58 @@ END
 	
 
 inciso1
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	
 	movlw	b'10'
 	movwf	inciso
 	movf dato1, w
-	movwf luzAct
+	movwf var2show
 	CALL MOSTRARDISPLAY
 	GOTO MENUBTN		; SI NO ESTÁ PRESIONADO
 inciso2
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
 	movlw	b'100'
 	movwf	inciso
 	movf dato2, w
-	movwf luzAct
+	movwf var2show
 	CALL MOSTRARDISPLAY
 
 	GOTO MENUBTN		; SI NO ESTÁ PRESIONADO
 inciso3
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
 	movlw	b'1000'
 	movwf	inciso
 	movf dato3, w
-	movwf luzAct
+	movwf var2show
 	CALL MOSTRARDISPLAY
 	GOTO MENUBTN		; SI NO ESTÁ PRESIONADO
 
 inciso4
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
+	CALL delay
 	movlw b'1'
 	movwf	inciso
 	movf dato4, w
-	movwf luzAct
+	movwf var2show
 	CALL MOSTRARDISPLAY
 	GOTO MENUBTN		; SI NO ESTÁ PRESIONADO
 
@@ -382,52 +421,52 @@ Delay_0
 
 ;;;;;;; ;;;;MOSTRAR DISPLAY ;;;;;;;;;
 MOSTRARDISPLAY	
-	BTFSS luzAct, 0		; SALTA LÍNEA SI PRIMER BIT ES 1
+	BTFSS var2show, 0		; SALTA LÍNEA SI PRIMER BIT ES 1
 	GOTO BITXXX0		; SI PRIMER BIT ES 0
 	GOTO BITXXX1		; SI PRIMER BIT ES 1	
 	
 ; PRIMER BIT ES 0
 BITXXX0
-	BTFSS luzAct, 1	; SALTA LÍNEA SI SEGUNDO BIT ES 1
+	BTFSS var2show, 1	; SALTA LÍNEA SI SEGUNDO BIT ES 1
 	GOTO BITXX00		; 00
 	GOTO BITXX10		; 10
 ; PRIMER BIT ES 1
 BITXXX1
-	BTFSS luzAct, 1	; SALTA SI SEGUNDO BIT ES 1
+	BTFSS var2show, 1	; SALTA SI SEGUNDO BIT ES 1
 	GOTO BITXX01		; 01
 	GOTO BITXX11		; 11
 ;00
 BITXX00
-	BTFSS luzAct, 2	; SALTA LÍNEA SI TERCER BIT ES 1
+	BTFSS var2show, 2	; SALTA LÍNEA SI TERCER BIT ES 1
 	GOTO BITX000		; 000
 	GOTO BITX100		; 100		-> 4	0110011
 ;10
 BITXX10
-	BTFSS luzAct, 2	; SALTA LÍNEA SI TERCER BIT ES 1
+	BTFSS var2show, 2	; SALTA LÍNEA SI TERCER BIT ES 1
 	GOTO BITX010		; 010		-> 2	1101101
 	GOTO BITX110		; 110		-> 6	1011111
 	
 ;01
 BITXX01
-	BTFSS luzAct, 2	; SALTA LÍNEA SI TERCER BIT ES 1
+	BTFSS var2show, 2	; SALTA LÍNEA SI TERCER BIT ES 1
 	GOTO BITX001		; 001		
 	GOTO BITX101		; 101		-> 5	1011011
 	
 ;11
 BITXX11
-	BTFSS luzAct, 2	; SALTA LÍNEA SI TERCER BIT ES 1
+	BTFSS var2show, 2	; SALTA LÍNEA SI TERCER BIT ES 1
 	GOTO BITX011		; 011		-> 3	1111001
 	GOTO BITX111		; 111		-> 7	1110000
 		
 ;000
 BITX000
-	BTFSS	luzAct, 3	; SALTA LÍNEA SI CUARTO BIT ES 1
+	BTFSS	var2show, 3	; SALTA LÍNEA SI CUARTO BIT ES 1
 	GOTO BIT0000	; 0000		-> 0		1111110
 	GOTO BIT1000	; 1000		-> 8		1111111
 	
 ;001
 BITX001
-	BTFSS luzAct, 3	; SALTA LÍNEA SI CUARTO BIT ES 1
+	BTFSS var2show, 3	; SALTA LÍNEA SI CUARTO BIT ES 1
 	GOTO BIT0001	; 0001		-> 1		0110000
 	GOTO BIT1001	; 1001		-> 9		0001100
 	
@@ -498,4 +537,55 @@ DISPLAY
 	MOVWF	PORTC	
 	RETURN
 ;;;;;;; FINALIZA MOSTRAR DISPLAY ;;;;;;;;;
+;;;;;;; INICIA METODO PARA CATEGORIZAR;;;;
+GetCategoria
+	movlw	d'0'
+	movwf	categoria
 
+	movlw	d'210'
+	subwf	luz1024, 0
+	BTFSc	STATUS, C
+	RETURN	
+	incf	categoria,1
+	movlw	d'194'
+	subwf	luz1024, 0
+	BTFSC STATUS, C
+	return
+	incf	categoria,1
+	movlw	d'174'
+	subwf	luz1024, 0
+	BTFSC STATUS, C
+	return
+	incf	categoria,1
+	movlw	d'158'
+	subwf	luz1024, 0
+	BTFSC STATUS, C
+	return
+	incf	categoria,1
+	movlw	d'138'
+	subwf	luz1024, 0
+	BTFSC STATUS, C
+	return
+	incf	categoria,1
+	movlw	d'117'
+	subwf	luz1024, 0
+	BTFSC STATUS, C
+	return
+	incf	categoria,1
+	movlw	d'82'
+	subwf	luz1024, 0
+	BTFSC STATUS, C
+	return
+	incf	categoria,1
+	movlw	d'51'
+	subwf	luz1024, 0
+	BTFSC STATUS, C
+	return
+	incf	categoria,1
+	movlw	d'28'
+	subwf	luz1024, 0
+	BTFSC STATUS, C
+	return
+	incf	categoria, 1
+	return
+;;;;;;; FINALIZA METODO PARA CATEGORIZAR ;;;;;;;

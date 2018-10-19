@@ -18,6 +18,12 @@ cond_y	EQU 0x31
 d10	EQU 0x32
 d11	EQU 0x33
 luzAct	EQU 0x34
+inciso	EQU 0x35
+
+dato1	EQU 0x36
+dato2	EQU 0x37
+dato3	EQU 0X38
+dato4	EQU 0x39
 
 INICIO
 	ORG	0X00
@@ -28,11 +34,10 @@ INICIO
 ; debemos configurar puerto de entrada y salida..
 ; puerto b
 	CLRF	TRISB		; CLEAR FILE CONFIGURA EL PUERTO B PARA QUE SEA SALIDA (0 = SALIDA)
-	;BSF TRISC, 7		; PUERTO C -> ENTRADA
-	CLRF 	TRISD		; PUERTO D -> SALIDA
+	BSF TRISA, 7		; PUERTO A -> ENTRADA
 	CLRF 	TRISC		; PUERTO C -> SALIDA
-
-
+	BSF TRISD, 7
+	
 	BCF	STATUS, RP0		;BITCLEAR FILE DE RP0 = BIT CLEARFY 5
 	
 	movlw 0x00;
@@ -43,11 +48,12 @@ INICIO
 
 
 START
+	; Declaramos variables
 	movlw	d'14'
 	movwf	x_f
 	movlw	d'50'
-	movwf	y_f
-	
+	movwf	y_f	
+
 	movlw	d'3'
 	movwf	luzact
 	
@@ -55,10 +61,38 @@ START
 	movwf	x
 	movlw	d'0'
 	movwf	y
-	CALL MOSTRARDISPLAY
+	
+	movlw	d'1'
+	movwf	inciso
 
-HOLA
-	GOTO HOLA
+	; primer inciso
+	movlw	d'1'
+	movwf	dato1
+
+	movlw	d'2'
+	movwf	dato2
+
+	movlw	d'3'
+	movwf	dato3
+
+	movlw	d'4'
+	movwf	dato4
+
+
+MENUBTN
+	BTFSS PORTD, 1	; VERIFICA SI BOTÓN ESTÁ PRESIONADO
+	GOTO MENUBTN		; SI NO ESTÁ PRESIONADO
+	
+	BTFSC inciso, 0 ; SALTA SI EL PRIMER BIT ESTÁ APAGADO
+	GOTO inciso1	; PRIMER BIT ENCENDIDO
+	BTFSC inciso, 1	; SALTA SI EL SEGUNDO BIT ESTÁ APAGADO
+	GOTO inciso2	; SEGUNDO BIT ENCENDIDO
+	BTFSC inciso, 2	; SALTA SI EL TERCER BIT ESTÁ APAGADO
+	GOTO inciso3	; TERCER BIT ENCENDIDO
+	BTFSC inciso, 3	; SALTA SI EL CUARTO BIT ESTÁ APAGADO
+	GOTO inciso4	; CUARTO BIT ENCENDIDO
+		
+	GOTO MENUBTN
 
 
 	CALL Buscar_X
@@ -69,6 +103,39 @@ HOLA
 
 END
 	
+	
+	
+
+inciso1
+	movlw	b'10'
+	movwf	inciso
+	movf dato1, w
+	movwf luzAct
+	CALL MOSTRARDISPLAY
+	GOTO MENUBTN		; SI NO ESTÁ PRESIONADO
+inciso2
+	movlw	b'100'
+	movwf	inciso
+	movf dato2, w
+	movwf luzAct
+	CALL MOSTRARDISPLAY
+
+	GOTO MENUBTN		; SI NO ESTÁ PRESIONADO
+inciso3
+	movlw	b'1000'
+	movwf	inciso
+	movf dato3, w
+	movwf luzAct
+	CALL MOSTRARDISPLAY
+	GOTO MENUBTN		; SI NO ESTÁ PRESIONADO
+
+inciso4
+	movlw b'1'
+	movwf	inciso
+	movf dato4, w
+	movwf luzAct
+	CALL MOSTRARDISPLAY
+	GOTO MENUBTN		; SI NO ESTÁ PRESIONADO
 
 
 REC_FINAL
@@ -431,3 +498,4 @@ DISPLAY
 	MOVWF	PORTC	
 	RETURN
 ;;;;;;; FINALIZA MOSTRAR DISPLAY ;;;;;;;;;
+

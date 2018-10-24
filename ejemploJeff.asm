@@ -43,10 +43,10 @@ _espera
 	; 1Eh ADRESH A/D Result Register High Byte
 	; 9Eh ADRESL A/D Result Register Low Byte 
 	movwf ADC ;ADC=W
-	rrf ADC,F ;ADC /4
-	rrf ADC,F
-	bcf ADC,7
-	bcf ADC,6
+	;rrf ADC,F ;ADC /4
+	;rrf ADC,F
+	;bcf ADC,7
+	;bcf ADC,6
 	movfw ADC ;W = ADC
 	movwf PORTB ;PORTB = W
 	movlw D'32' ;Comparamos el valor del ADC para saber si es menor que 128

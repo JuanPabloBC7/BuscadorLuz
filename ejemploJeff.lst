@@ -37,7 +37,7 @@ Line    Address Opcode  Instruction
 0033    0010            	;goto _bucle ;Esperar que el timer0 desborde
 0034    0010            	; SE DEBE DE COLOCAR UN DELAY PARA QUE ESPERE LA CONVERSION
 0035    0010    1503    	BSF  STATUS,Z
-0036    0011    2026    	CALL _PRESPERA
+0036    0011    2022    	CALL _PRESPERA
 0037    0012    110B    	bcf INTCON,T0IF ;Limpiar el indicador de desborde
 0038    0013    151F    	bsf ADCON0,GO ;Comenzar conversion A/D
 0039    0014            _espera
@@ -47,44 +47,44 @@ Line    Address Opcode  Instruction
 0043    0017            	; 1Eh ADRESH A/D Result Register High Byte
 0044    0017            	; 9Eh ADRESL A/D Result Register Low Byte 
 0045    0017    00A0    	movwf ADC ;ADC=W
-0046    0018    0CA0    	rrf ADC,F ;ADC /4
-0047    0019    0CA0    	rrf ADC,F
-0048    001A    13A0    	bcf ADC,7
-0049    001B    1320    	bcf ADC,6
-0050    001C    0820    	movfw ADC ;W = ADC
-0051    001D    0086    	movwf PORTB ;PORTB = W
-0052    001E    3020    	movlw D'32' ;Comparamos el valor del ADC para saber si es menor que 128
-0053    001F    0220    	subwf ADC,W
-0054    0020    1C03    	btfss STATUS,C ;Es mayor a 128?
-0055    0021    2824    	goto _desactivar ;No, desactivar RB7
-0056    0022    1787    	bsf PORTC,7 ;Si, RB7 = 1 logico
-0057    0023    2810    	goto _bucle ;Ir bucle
-0058    0024            _desactivar
-0059    0024    1386    	bcf PORTB,7 ;RB7 = 0 logico
-0060    0025    2810    	goto _bucle ;Ir bucle
-0061    0026            	
-0062    0026            _PRESPERA
-0063    0026    30FF    	MOVLW 0XFF
-0064    0027    00A1    	MOVWF CON
-0065    0028    00A2    	MOVWF CON2
-0066    0029    00A3    	MOVWF CON3	
-0067    002A    202C    	CALL ESPE
-0068    002B    0008    	RETURN	
-0069    002C            	
-0070    002C            ESPE
-0071    002C    0BA1    	DECFSZ	CON,0X01
-0072    002D    282C    	GOTO	ESPE
-0073    002E    2030    	CALL	ESPE2
-0074    002F    0008    	RETURN
-0075    0030            ESPE2
-0076    0030    0BA2    	DECFSZ	CON2,0X01
-0077    0031    2830    	GOTO	ESPE2
-0078    0032    2034    	CALL	ESPE3
-0079    0033    0008    	RETURN
-0080    0034            ESPE3
-0081    0034    0BA3    	DECFSZ	CON3,0X01
-0082    0035    2834    	GOTO	ESPE3
-0083    0036    0008    	RETURN		
-0084    0037            end
+0046    0018            	;rrf ADC,F ;ADC /4
+0047    0018            	;rrf ADC,F
+0048    0018            	;bcf ADC,7
+0049    0018            	;bcf ADC,6
+0050    0018    0820    	movfw ADC ;W = ADC
+0051    0019    0086    	movwf PORTB ;PORTB = W
+0052    001A    3020    	movlw D'32' ;Comparamos el valor del ADC para saber si es menor que 128
+0053    001B    0220    	subwf ADC,W
+0054    001C    1C03    	btfss STATUS,C ;Es mayor a 128?
+0055    001D    2820    	goto _desactivar ;No, desactivar RB7
+0056    001E    1787    	bsf PORTC,7 ;Si, RB7 = 1 logico
+0057    001F    2810    	goto _bucle ;Ir bucle
+0058    0020            _desactivar
+0059    0020    1386    	bcf PORTB,7 ;RB7 = 0 logico
+0060    0021    2810    	goto _bucle ;Ir bucle
+0061    0022            	
+0062    0022            _PRESPERA
+0063    0022    30FF    	MOVLW 0XFF
+0064    0023    00A1    	MOVWF CON
+0065    0024    00A2    	MOVWF CON2
+0066    0025    00A3    	MOVWF CON3	
+0067    0026    2028    	CALL ESPE
+0068    0027    0008    	RETURN	
+0069    0028            	
+0070    0028            ESPE
+0071    0028    0BA1    	DECFSZ	CON,0X01
+0072    0029    2828    	GOTO	ESPE
+0073    002A    202C    	CALL	ESPE2
+0074    002B    0008    	RETURN
+0075    002C            ESPE2
+0076    002C    0BA2    	DECFSZ	CON2,0X01
+0077    002D    282C    	GOTO	ESPE2
+0078    002E    2030    	CALL	ESPE3
+0079    002F    0008    	RETURN
+0080    0030            ESPE3
+0081    0030    0BA3    	DECFSZ	CON3,0X01
+0082    0031    2830    	GOTO	ESPE3
+0083    0032    0008    	RETURN		
+0084    0033            end
 ---------------------------------------------
 Number of errors = 0

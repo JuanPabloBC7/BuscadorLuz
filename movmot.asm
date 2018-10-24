@@ -25,10 +25,26 @@ dato2	EQU 0x37
 dato3	EQU 0X38
 dato4	EQU 0x39
 
-var2show EQU 0x40
+categoria	EQU	0x3A
+luz512		EQU	0x3B
+
+var2show EQU 0x3C
+
+;; Variables FotoResistencia
+ADC	EQU	0x3D
+CON	EQU	0X3F
+CON2	EQU	0X40
+CON3	EQU	0X41
+
+luzmax	EQU	0x42
+luzmin	EQU	0X43
+
+ndispositivo EQU 0x44
+;; variables 
 
 INICIO
 	ORG	0X00
+
 
 
 	BSF	STATUS, 5 ; Colocamos en 1 el bit 5 de reg. estatus 
@@ -36,7 +52,7 @@ INICIO
 ; debemos configurar puerto de entrada y salida..
 ; puerto b
 	CLRF	TRISB		; CLEAR FILE CONFIGURA EL PUERTO B PARA QUE SEA SALIDA (0 = SALIDA)
-	BSF TRISA, 7		; PUERTO A -> ENTRADA
+	;BSF TRISA, 7		; PUERTO A -> ENTRADA
 	CLRF 	TRISC		; PUERTO C -> SALIDA
 	BSF TRISD, 7
 	
@@ -79,8 +95,27 @@ START
 
 	movlw	d'4'
 	movwf	dato4
+	
+	MOVLW	d'0'
+	movwf	luzmax
 
+	movlw	d'19'
+	movwf	luzmin
 
+		
+	movlw d'8'
+	movwf	ndispositivo
+
+	CALL MovimientoDelanteCompleto
+	CALL MovimientoDetrazCompleto
+	
+	CALL Buscar_X
+	CALL Buscar_Y
+	
+infinite
+	CALL MENUBTN
+	goto infinite
+	
 MENUBTN
 	CALL delay
 	CALL delay
@@ -106,75 +141,50 @@ MENUBTN
 	BTFSC inciso, 3	; SALTA SI EL CUARTO BIT ESTÁ APAGADO
 	GOTO inciso4	; CUARTO BIT ENCENDIDO
 		
-	GOTO MENUBTN
+	RETURN
 
 
-	CALL Buscar_X
-	CALL Buscar_Y
-
-	CALL MovimientoDelanteCompleto
-	CALL MovimientoDetrazCompleto
-
+	
 END
 	
 	
 	
 
 inciso1
-	CALL delay
-	CALL delay
-	CALL delay
-	CALL delay
-	CALL delay
-	CALL delay
 	
 	movlw	b'10'
 	movwf	inciso
-	movf dato1, w
-	movwf var2show
-	CALL MOSTRARDISPLAY
-	GOTO MENUBTN		; SI NO ESTÁ PRESIONADO
+	
+	CALL AsignarLuz512
+	CALL getCategoria
+	movf categoria, w
+	movwf	var2show
+	call mostrardisplay	
+	RETURN		; SI NO ESTÁ PRESIONADO
 inciso2
-	CALL delay
-	CALL delay
-	CALL delay
-	CALL delay
-	CALL delay
-	CALL delay
+
 	movlw	b'100'
 	movwf	inciso
-	movf dato2, w
+	movf luzmax, w
 	movwf var2show
 	CALL MOSTRARDISPLAY
-
-	GOTO MENUBTN		; SI NO ESTÁ PRESIONADO
+	RETURN
 inciso3
-	CALL delay
-	CALL delay
-	CALL delay
-	CALL delay
-	CALL delay
-	CALL delay
+	
 	movlw	b'1000'
 	movwf	inciso
-	movf dato3, w
+	movf luzmin, w
 	movwf var2show
 	CALL MOSTRARDISPLAY
-	GOTO MENUBTN		; SI NO ESTÁ PRESIONADO
-
+	RETURN
 inciso4
-	CALL delay
-	CALL delay
-	CALL delay
-	CALL delay
-	CALL delay
-	CALL delay
+	
 	movlw b'1'
 	movwf	inciso
-	movf dato4, w
+	movf ndispositivo, w
 	movwf var2show
 	CALL MOSTRARDISPLAY
-	GOTO MENUBTN		; SI NO ESTÁ PRESIONADO
+	RETURN
 
 
 REC_FINAL
@@ -328,8 +338,8 @@ DISPLAYB
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 MOVIMIENTOBDELANTE
-	movlw d'10'
-	movwf d5
+	movlw d'160'			;160
+	movwf d5	
 INICIOMOVIMIENTOB1
 	decfsz d5, 1
 	GOTO B1
@@ -338,10 +348,11 @@ B1
 	CALL PASOBDELANTE 	; 32 PASOS
 	CALL PASOBDELANTE
 	INCF y, 1
+	;CALL ASSMAXMIN_P	
 	GOTO INICIOMOVIMIENTOB1
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 MOVIMIENTOBDETRAZ
-	movlw d'5'
+	movlw d'160'
 	movwf d6
 INICIOMOVIMIENTOB2
 	decfsz d6, 1
@@ -350,12 +361,13 @@ INICIOMOVIMIENTOB2
 B2
 	CALL PASOBREVEZ	; 32 PASOS
 	CALL PASOBREVEZ
+	;CALL ASSMAXMIN_P	
 	DECF y, 1
 	GOTO INICIOMOVIMIENTOB2
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 MOVIMIENTOADELANTE
-	movlw d'5'
+	movlw d'17'
 	movwf d7
 INICIOMOVIMIENTOA1
 	decfsz d7, 1
@@ -367,7 +379,7 @@ A1
 	GOTO INICIOMOVIMIENTOA1
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 MovimientoDelanteCompleto
-	movlw d'17'
+	movlw d'17'			; 17 es el correc
 	movwf d8
 INICIOMOVIMIENTOC1
 	decfsz d8, 1
@@ -375,15 +387,17 @@ INICIOMOVIMIENTOC1
 	RETURN
 C1
 	CALL MOVIMIENTOADELANTE		; 10 PASOADELANTE
-	INCF x, 1	
+	INCF x, 1
+	;CALL ASSMAXMIN_P	
 	CALL MOVIMIENTOBDELANTE
 	CALL MOVIMIENTOADELANTE		; 10 PASOADELANTE
 	INCF x, 1
+	;CALL ASSMAXMIN_P	
 	CALL MOVIMIENTOBDETRAZ
 	GOTO INICIOMOVIMIENTOC1
 
 MovimientoDetrazCompleto
-	movlw d'255'
+	movlw d'255'			; 255 es el correcto
 	movwf d9
 INICIOMOVIMIENTOD1
 	decfsz d9, 1
@@ -398,7 +412,8 @@ MOVD1
 	GOTO INICIOMOVIMIENTOD1		
 
 
-	
+
+
 Delay
 			;1693 cycles
 	movlw	0x52
@@ -539,53 +554,166 @@ DISPLAY
 ;;;;;;; FINALIZA MOSTRAR DISPLAY ;;;;;;;;;
 ;;;;;;; INICIA METODO PARA CATEGORIZAR;;;;
 GetCategoria
-	movlw	d'0'
+	movlw	d'9'
 	movwf	categoria
 
 	movlw	d'210'
-	subwf	luz1024, 0
+	subwf	luz512, 0
 	BTFSc	STATUS, C
 	RETURN	
-	incf	categoria,1
+	decf	categoria,1
 	movlw	d'194'
-	subwf	luz1024, 0
+	subwf	luz512, 0
 	BTFSC STATUS, C
 	return
-	incf	categoria,1
+	decf	categoria,1
 	movlw	d'174'
-	subwf	luz1024, 0
+	subwf	luz512, 0
 	BTFSC STATUS, C
 	return
-	incf	categoria,1
+	decf	categoria,1
 	movlw	d'158'
-	subwf	luz1024, 0
+	subwf	luz512, 0
 	BTFSC STATUS, C
 	return
-	incf	categoria,1
+	decf	categoria,1
 	movlw	d'138'
-	subwf	luz1024, 0
+	subwf	luz512, 0
 	BTFSC STATUS, C
 	return
-	incf	categoria,1
+	decf	categoria,1
 	movlw	d'117'
-	subwf	luz1024, 0
+	subwf	luz512, 0
 	BTFSC STATUS, C
 	return
-	incf	categoria,1
+	decf	categoria,1
 	movlw	d'82'
-	subwf	luz1024, 0
+	subwf	luz512, 0
 	BTFSC STATUS, C
 	return
-	incf	categoria,1
+	decf	categoria,1
 	movlw	d'51'
-	subwf	luz1024, 0
+	subwf	luz512, 0
 	BTFSC STATUS, C
 	return
-	incf	categoria,1
+	decf	categoria,1
 	movlw	d'28'
-	subwf	luz1024, 0
+	subwf	luz512, 0
 	BTFSC STATUS, C
 	return
-	incf	categoria, 1
+	decf	categoria, 1
 	return
-;;;;;;; FINALIZA METODO PARA CATEGORIZAR ;;;;;;;
+;;;;;;;;;; FINALIZA METODO PARA CATEGORIZAR ;;;;;;;;;;
+;;;;;;;;;; FINALIZA LECTURA DE FOTORESISTOR ;;;;;;;;;;
+
+AsignarLuz512
+	bcf STATUS,RP0 ;Ir banco 0
+	bcf STATUS,RP1
+	movlw b'01000001' ;A/D conversion Fosc/8
+	movwf ADCON0
+	;     	     7     6     5    4    3    2       1 0
+	; 1Fh ADCON0 ADCS1 ADCS0 CHS2 CHS1 CHS0 GO/DONE ? ADON
+	bsf STATUS,RP0 ;Ir banco 1
+	bcf STATUS,RP1
+	movlw b'00000111'
+	movwf OPTION_REG ;TMR0 preescaler, 1:156
+
+	;                7    6      5    4    3   2   1   0 
+	; 81h OPTION_REG RBPU INTEDG T0CS T0SE PSA PS2 PS1 PS0
+	movlw b'00001110' ;A/D Port AN0/RA0
+	movwf ADCON1
+	;            7    6     5 4 3     2     1     0 
+	; 9Fh ADCON1 ADFM ADCS2 ? ? PCFG3 PCFG2 PCFG1 PCFG0
+	bsf TRISA,0 ;RA0 linea de entrada para el ADC
+	;clrf TRISB
+	bcf STATUS,RP0 ;Ir banco 0
+	bcf STATUS,RP1
+_bucle
+	;btfss INTCON,T0IF
+	;goto _bucle ;Esperar que el timer0 desborde
+	; SE DEBE DE COLOCAR UN DELAY PARA QUE ESPERE LA CONVERSION
+	BSF  STATUS,Z
+	CALL _PRESPERA
+	bcf INTCON,T0IF ;Limpiar el indicador de desborde
+	bsf ADCON0,GO ;Comenzar conversion A/D
+_espera
+	btfsc ADCON0,GO ;ADCON0 es 0? (la conversion esta completa?)
+	goto _espera ;No, ir _espera
+	movf ADRESH,W ;Si, W=ADRESH
+	; 1Eh ADRESH A/D Result Register High Byte
+	; 9Eh ADRESL A/D Result Register Low Byte 
+	movwf ADC ;ADC=W
+	;rrf ADC,F ;ADC /4
+	;rrf ADC,F
+	;bcf ADC,7
+	;bcf ADC,6
+	movfw ADC ;W = ADC
+	movwf luz512 ;luz512 = W
+	call getCategoria
+	return
+	movlw D'32' ;Comparamos el valor del ADC para saber si es menor que 128
+	subwf ADC,W
+	;btfss STATUS,C ;Es mayor a 128?
+	goto _desactivar ;No, desactivar RB7
+	bsf PORTC,7 ;Si, RB7 = 1 logico
+	goto _bucle ;Ir bucle
+_desactivar
+	bcf luz512,7 ;RB7 = 0 logico
+	goto _bucle ;Ir bucle
+	
+_PRESPERA
+	MOVLW 0XFF
+	MOVWF CON
+	MOVWF CON2
+	MOVWF CON3	
+	CALL ESPE
+	RETURN	
+	
+ESPE
+	DECFSZ	CON,0X01
+	GOTO	ESPE
+	CALL	ESPE2
+	RETURN
+ESPE2
+	DECFSZ	CON2,0X01
+	GOTO	ESPE2
+	CALL	ESPE3
+	RETURN
+ESPE3
+	DECFSZ	CON3,0X01
+	GOTO	ESPE3
+	RETURN		
+;;;;;;;;;; FINALIZA LECTURA DE FOTORESISTOR ;;;;;;;;;;
+;;;;;;;;;; COMPARACION PROPIA DE LUZ 	    ;;;;;;;;;;
+ASSMAXMIN_P	
+	CALL AsignarLuz512			quitar comentario
+	CALL getCategoria
+	movf categoria, w
+	movwf	var2show
+	call mostrardisplay
+
+
+	MOVF	categoria,W
+	SUBWF	luzmin,W	
+	BTFSC	STATUS,C
+	CALL	EntradaMenor
+
+	MOVF	categoria,W
+	SUBWF	luzmax,W
+	BTFSS	STATUS,C
+	CALL 	EntradaMayor
+	return
+EntradaMayor
+	MOVF	categoria,W
+	MOVWF	luzmax
+	movf	x,	w
+	movwf	x_f
+	movf	y,	w
+	movwf	y_f
+	RETURN
+
+EntradaMenor
+	MOVF	categoria,W
+	MOVWF	luzmin
+	RETURN
+;;;;;;;;; COMPARACION AJENA DE LUZ	     ;;;;;;;;;;

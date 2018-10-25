@@ -45,6 +45,29 @@ ndispositivo EQU 0x44
 INICIO
 	ORG	0X00
 
+	bcf STATUS,RP0 ;Ir banco 0
+	bcf STATUS,RP1
+	movlw b'01000001' ;A/D conversion Fosc/8
+	movwf ADCON0
+	;     	     7     6     5    4    3    2       1 0
+	; 1Fh ADCON0 ADCS1 ADCS0 CHS2 CHS1 CHS0 GO/DONE ? ADON
+	bsf STATUS,RP0 ;Ir banco 1
+	bcf STATUS,RP1
+	movlw b'00000111'
+	movwf OPTION_REG ;TMR0 preescaler, 1:156
+
+	;                7    6      5    4    3   2   1   0 
+	; 81h OPTION_REG RBPU INTEDG T0CS T0SE PSA PS2 PS1 PS0
+	movlw b'00001110' ;A/D Port AN0/RA0
+	movwf ADCON1
+	;            7    6     5 4 3     2     1     0 
+	; 9Fh ADCON1 ADFM ADCS2 ? ? PCFG3 PCFG2 PCFG1 PCFG0
+	bsf TRISA,0 ;RA0 linea de entrada para el ADC
+	;clrf TRISB
+	bcf STATUS,RP0 ;Ir banco 0
+	bcf STATUS,RP1
+
+
 
 
 	BSF	STATUS, 5 ; Colocamos en 1 el bit 5 de reg. estatus 
@@ -107,7 +130,7 @@ START
 	movwf	ndispositivo
 
 	CALL MovimientoDelanteCompleto
-	CALL MovimientoDetrazCompleto
+	
 	
 	CALL Buscar_X
 	CALL Buscar_Y
@@ -115,7 +138,8 @@ START
 infinite
 	CALL MENUBTN
 	goto infinite
-	
+
+END
 MENUBTN
 	CALL delay
 	CALL delay
@@ -145,7 +169,7 @@ MENUBTN
 
 
 	
-END
+
 	
 	
 	
@@ -338,7 +362,7 @@ DISPLAYB
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 MOVIMIENTOBDELANTE
-	movlw d'160'			;160
+	movlw d'80'			;160 (150)
 	movwf d5	
 INICIOMOVIMIENTOB1
 	decfsz d5, 1
@@ -348,11 +372,11 @@ B1
 	CALL PASOBDELANTE 	; 32 PASOS
 	CALL PASOBDELANTE
 	INCF y, 1
-	;CALL ASSMAXMIN_P	
+	CALL ASSMAXMIN_P	
 	GOTO INICIOMOVIMIENTOB1
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 MOVIMIENTOBDETRAZ
-	movlw d'160'
+	movlw d'80'			; 160 (170)
 	movwf d6
 INICIOMOVIMIENTOB2
 	decfsz d6, 1
@@ -361,7 +385,7 @@ INICIOMOVIMIENTOB2
 B2
 	CALL PASOBREVEZ	; 32 PASOS
 	CALL PASOBREVEZ
-	;CALL ASSMAXMIN_P	
+	CALL ASSMAXMIN_P	
 	DECF y, 1
 	GOTO INICIOMOVIMIENTOB2
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -379,7 +403,7 @@ A1
 	GOTO INICIOMOVIMIENTOA1
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 MovimientoDelanteCompleto
-	movlw d'17'			; 17 es el correc
+	movlw d'9'			; 8 es el correc
 	movwf d8
 INICIOMOVIMIENTOC1
 	decfsz d8, 1
@@ -388,11 +412,11 @@ INICIOMOVIMIENTOC1
 C1
 	CALL MOVIMIENTOADELANTE		; 10 PASOADELANTE
 	INCF x, 1
-	;CALL ASSMAXMIN_P	
+	CALL ASSMAXMIN_P	
 	CALL MOVIMIENTOBDELANTE
 	CALL MOVIMIENTOADELANTE		; 10 PASOADELANTE
 	INCF x, 1
-	;CALL ASSMAXMIN_P	
+	CALL ASSMAXMIN_P	
 	CALL MOVIMIENTOBDETRAZ
 	GOTO INICIOMOVIMIENTOC1
 
@@ -607,27 +631,7 @@ GetCategoria
 ;;;;;;;;;; FINALIZA LECTURA DE FOTORESISTOR ;;;;;;;;;;
 
 AsignarLuz512
-	bcf STATUS,RP0 ;Ir banco 0
-	bcf STATUS,RP1
-	movlw b'01000001' ;A/D conversion Fosc/8
-	movwf ADCON0
-	;     	     7     6     5    4    3    2       1 0
-	; 1Fh ADCON0 ADCS1 ADCS0 CHS2 CHS1 CHS0 GO/DONE ? ADON
-	bsf STATUS,RP0 ;Ir banco 1
-	bcf STATUS,RP1
-	movlw b'00000111'
-	movwf OPTION_REG ;TMR0 preescaler, 1:156
 
-	;                7    6      5    4    3   2   1   0 
-	; 81h OPTION_REG RBPU INTEDG T0CS T0SE PSA PS2 PS1 PS0
-	movlw b'00001110' ;A/D Port AN0/RA0
-	movwf ADCON1
-	;            7    6     5 4 3     2     1     0 
-	; 9Fh ADCON1 ADFM ADCS2 ? ? PCFG3 PCFG2 PCFG1 PCFG0
-	bsf TRISA,0 ;RA0 linea de entrada para el ADC
-	;clrf TRISB
-	bcf STATUS,RP0 ;Ir banco 0
-	bcf STATUS,RP1
 _bucle
 	;btfss INTCON,T0IF
 	;goto _bucle ;Esperar que el timer0 desborde
@@ -686,7 +690,7 @@ ESPE3
 ;;;;;;;;;; FINALIZA LECTURA DE FOTORESISTOR ;;;;;;;;;;
 ;;;;;;;;;; COMPARACION PROPIA DE LUZ 	    ;;;;;;;;;;
 ASSMAXMIN_P	
-	CALL AsignarLuz512			quitar comentario
+	CALL AsignarLuz512			;quitar comentario
 	CALL getCategoria
 	movf categoria, w
 	movwf	var2show

@@ -9,6 +9,7 @@ d6	EQU 0X27
 d7	EQU 0X28
 d8	EQU 0x29
 d9	EQU 0X2A
+d40	equ 0x3c
 x	EQU 0x2B
 y	EQU 0x2C
 x_f	EQU 0x2D
@@ -74,11 +75,14 @@ INICIO
 ; en el banco 1 tenemos trisa, trisb, ... , trisd
 ; debemos configurar puerto de entrada y salida..
 ; puerto b
-	CLRF	TRISB		; CLEAR FILE CONFIGURA EL PUERTO B PARA QUE SEA SALIDA (0 = SALIDA)
+	clrf	TRISD;
+		; CLEAR FILE CONFIGURA EL PUERTO B PARA QUE SEA ENTRADA (0 = SALIDA)
 	;BSF TRISA, 7		; PUERTO A -> ENTRADA
 	CLRF 	TRISC		; PUERTO C -> SALIDA
-	BSF TRISD, 7
-	
+	;BSF TRISD, 7
+	movlw b'11111111'
+	movwf trisb
+
 	BCF	STATUS, RP0		;BITCLEAR FILE DE RP0 = BIT CLEARFY 5
 	
 	movlw 0x00;
@@ -90,6 +94,9 @@ INICIO
 
 START
 	; Declaramos variables
+	movlw	b'00000000'
+	movwf	PORTB
+
 	movlw	d'14'
 	movwf	x_f
 	movlw	d'50'
@@ -130,8 +137,11 @@ START
 	movwf	ndispositivo
 
 	CALL MovimientoDelanteCompleto
-	
-	
+	CALL MovimientoDetrazCompleto
+	movlw	d'0'
+	movwf	x
+	movlw	d'0'
+	movwf	y
 	CALL Buscar_X
 	CALL Buscar_Y
 	
@@ -139,7 +149,7 @@ infinite
 	CALL MENUBTN
 	goto infinite
 
-END
+
 MENUBTN
 	CALL delay
 	CALL delay
@@ -153,7 +163,7 @@ MENUBTN
 	CALL delay
 	CALL delay
 	CALL delay
-	BTFSS PORTD, 1	; VERIFICA SI BOTÓN ESTÁ PRESIONADO
+	BTFSS PORTA, 1	; VERIFICA SI BOTÓN ESTÁ PRESIONADO
 	GOTO MENUBTN		; SI NO ESTÁ PRESIONADO
 	
 	BTFSC inciso, 0 ; SALTA SI EL PRIMER BIT ESTÁ APAGADO
@@ -167,7 +177,7 @@ MENUBTN
 		
 	RETURN
 
-
+END
 	
 
 	
@@ -259,7 +269,6 @@ PASOADELANTE
 	CALL PASO3A
 	CALL DELAY
 	CALL PASO4A
-	CALL DELAY
 	RETURN	
 PASOAREVEZ
 	CALL PASO4A
@@ -269,7 +278,6 @@ PASOAREVEZ
 	CALL PASO2A
 	CALL DELAY
 	CALL PASO1A
-	CALL DELAY
 	RETURN	
 
 PASOBDELANTE
@@ -339,15 +347,15 @@ PASO4B
 
 DISPLAYA
 	MOVF	DATO, W
-	MOVWF	PORTB	
+	MOVWF	PORTD	
 	RETURN
 
 DISPLAYB
 	; Se limpia mitad de puertos inservibles
-	BCF PORTB, 4
-	BCF PORTB, 5
-	BCF PORTB, 6
-	BCF PORTB, 7
+	BCF PORTD, 4
+	BCF PORTD, 5
+	BCF PORTD, 6
+	BCF PORTD, 7
 
 	
 	; Shift para colocar en parte más significativa
@@ -357,7 +365,7 @@ DISPLAYB
 	RLF DATO, 1
 
 	MOVF	DATO, W
-	IORWF	PORTB, 1 ; OR ENTRE DATO Y PUERTOB
+	IORWF	PORTD, 1 ; OR ENTRE DATO Y PUERTOB
 	RETURN
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -402,6 +410,20 @@ A1
 	CALL PASOADELANTE
 	GOTO INICIOMOVIMIENTOA1
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MOVIMIENTOADEtraz
+	movlw d'17'
+	movwf d40
+INICIOMOVIMIENTOA20
+	decfsz d40, 1
+	GOTO A20
+	RETURN
+A20
+	CALL PASOArevez	; 32 PASOS
+	CALL PASOArevez
+	GOTO INICIOMOVIMIENTOA20
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 MovimientoDelanteCompleto
 	movlw d'9'			; 8 es el correc
 	movwf d8
@@ -421,19 +443,20 @@ C1
 	GOTO INICIOMOVIMIENTOC1
 
 MovimientoDetrazCompleto
-	movlw d'255'			; 255 es el correcto
+	CALL MOVIMIENTOADETRAZ
+	CALL MOVIMIENTOADETRAZ
+	movf x, w			; 8 es el correc
 	movwf d9
-INICIOMOVIMIENTOD1
+INICIOMOVIMIENTOC11
+	decf	d9, 1
 	decfsz d9, 1
-	GOTO MOVD1
-	MOVLW	B'0' 	; EN W SE ENCUENTRA 0
-	MOVWF	x	; Movemos a x, w -> x = 0 (reseteamos x)
-
-
+	GOTO C11
 	RETURN
-MOVD1
-	CALL PASOAREVEZ			
-	GOTO INICIOMOVIMIENTOD1		
+C11	
+	CALL MOVIMIENTOADETRAZ
+	CALL MOVIMIENTOADETRAZ
+	GOTO INICIOMOVIMIENTOC11
+
 
 
 

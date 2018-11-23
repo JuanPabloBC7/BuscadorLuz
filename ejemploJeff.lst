@@ -13,7 +13,7 @@ Line    Address Opcode  Instruction
 0009    0001            _inicio
 0010    0001    1283    	bcf STATUS,RP0 ;Ir banco 0
 0011    0002    1303    	bcf STATUS,RP1
-0012    0003    3041    	movlw b'01000001' ;A/D conversion Fosc/8
+0012    0003    3051    	movlw b'01010001' ;A/D conversion Fosc/8
 0013    0004    009F    	movwf ADCON0
 0014    0005            	;     	     7     6     5    4    3    2       1 0
 0015    0005            	; 1Fh ADCON0 ADCS1 ADCS0 CHS2 CHS1 CHS0 GO/DONE ? ADON

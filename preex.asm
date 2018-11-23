@@ -1,0 +1,112 @@
+suma	equ 0x21
+d1	equ 0x22
+d2	equ 0x23
+
+INICIO
+	org 0x00
+	
+	BSF	STATUS, RP0
+	BCF	STATUS, RP1
+
+	movlw	b'11111111'
+	movwf	TRISB
+
+	movlw	b'11110000'
+	movwf	TRISC
+
+	BCF	STATUS, RP0
+	BCF	STATUS, RP1
+START
+	
+	CALL DELAY
+	CALL DELAY
+	CALL DELAY
+	CALL DELAY
+	CALL DELAY
+	CALL DELAY
+
+
+	BTFSC	PORTB, 0
+	CALL BTN0
+	BTFSC	PORTB, 1
+	CALL BTN1
+	BTFSC	PORTB, 2
+	CALL BTN2
+	BTFSC	PORTB, 3
+	CALL BTN3
+	BTFSC	PORTB, 4
+	CALL BTN4
+	BTFSC	PORTB, 5
+	CALL BTN5
+	BTFSC	PORTB, 6
+	CALL BTN6
+	BTFSC	PORTB, 7
+	CALL BTN7
+	
+	
+	MOVF	SUMA, W
+	MOVWF	PORTC
+	GOTO START
+
+END
+
+BTN0
+	MOVF	suma, w
+	ADDLW	0
+	MOVWF	suma
+	RETURN
+BTN1
+	MOVF	suma, w
+	ADDLW	1
+	MOVWF	suma
+	RETURN
+BTN2
+	MOVF	suma, w
+	ADDLW	2
+	MOVWF	suma
+	RETURN
+BTN3
+	MOVF	suma, w
+	ADDLW	3
+	MOVWF	suma
+	RETURN
+BTN4
+	MOVF	suma, w
+	ADDLW	4
+	MOVWF	suma
+	RETURN
+BTN5
+	MOVF	suma, w
+	ADDLW	5
+	MOVWF	suma
+	RETURN
+BTN6
+	MOVF	suma, w
+	ADDLW	6
+	MOVWF	suma
+	RETURN
+BTN7
+	MOVLW	0
+	MOVWF	suma
+	RETURN
+
+
+Delay
+			;16993 cycles
+	movlw	0x46
+	movwf	d1
+	movlw	0x0E
+	movwf	d2
+Delay_0
+	decfsz	d1, f
+	goto	$+2
+	decfsz	d2, f
+	goto	Delay_0
+
+			;3 cycles
+	goto	$+1
+	nop
+
+			;4 cycles (including call)
+	return
+

@@ -1,0 +1,57 @@
+---------------------------------------------
+PIC ASSEMBLER LISTING
+Line    Address Opcode  Instruction
+---------------------------------------------
+0001    0000            var2shift	equ	0x29
+0002    0000            d1		equ	0x30
+0003    0000            d2		equ	0x31
+0004    0000            
+0005    0000            
+0006    0000            START
+0007    0000    1683    	BSF	STATUS, RP0
+0008    0001    1303    	BCF	STATUS, RP1
+0009    0002            
+0010    0002    0186    	CLRF	TRISB
+0011    0003            
+0012    0003    1283    	BCF	STATUS, RP0
+0013    0004            
+0014    0004    3001    	MOVLW	b'0000001'
+0015    0005    00A9    	MOVWF	var2shift
+0016    0006            Inicio
+0017    0006    2009    	CALL Shift
+0018    0007    200D    	CALL Delay1
+0019    0008    2806    	GOTO Inicio
+0020    0009            
+0021    0009            Shift
+0022    0009    0DA9    	RLF var2shift, 1
+0023    000A    0829    	MOVF var2shift, W
+0024    000B    0086    	MOVWF PORTB
+0025    000C    0008    	RETURN
+0026    000D            
+0027    000D            
+0028    000D            Delay1
+0029    000D    2010    	CALL delay
+0030    000E    2010    	CALL delay
+0031    000F    0008    	RETURN
+0032    0010            
+0033    0010            
+0034    0010            Delay
+0035    0010            			;1693 cycles
+0036    0010    3052    	movlw	0x52
+0037    0011    00B0    	movwf	d1
+0038    0012    3002    	movlw	0x02
+0039    0013    00B1    	movwf	d2
+0040    0014            Delay_0
+0041    0014    0BB0    	decfsz	d1, f
+0042    0015    2817    	goto	$+2
+0043    0016    0BB1    	decfsz	d2, f
+0044    0017    2814    	goto	Delay_0
+0045    0018            
+0046    0018            			;3 cycles
+0047    0018    2819    	goto	$+1
+0048    0019    0000    	nop
+0049    001A            
+0050    001A            			;4 cycles (including call)
+0051    001A    0008    	return
+---------------------------------------------
+Number of errors = 0

@@ -9,7 +9,7 @@ CON3 EQU 0X23
 _inicio
 	bcf STATUS,RP0 ;Ir banco 0
 	bcf STATUS,RP1
-	movlw b'01000001' ;A/D conversion Fosc/8
+	movlw b'01010001' ;A/D conversion Fosc/8
 	movwf ADCON0
 	;     	     7     6     5    4    3    2       1 0
 	; 1Fh ADCON0 ADCS1 ADCS0 CHS2 CHS1 CHS0 GO/DONE ? ADON

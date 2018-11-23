@@ -1,0 +1,144 @@
+---------------------------------------------
+PIC ASSEMBLER LISTING
+Line    Address Opcode  Instruction
+---------------------------------------------
+0001    0000            var2show	EQU 0X22
+0002    0000            dato		EQU 0x23
+0003    0000            
+0004    0000            START
+0005    0000    1683    	BSF	STATUS, RP0
+0006    0001    1303    	BCF	STATUS, RP1
+0007    0002            
+0008    0002    0187    	CLRF	TRISC
+0009    0003            
+0010    0003    1283    	BCF	STATUS, RP0
+0011    0004    3000    	MOVLW	0
+0012    0005    0087    	MOVWF	PORTC
+0013    0006            
+0014    0006            Inicio
+0015    0006    0806    	MOVF	PORTB, W
+0016    0007    00A2    	MOVWF	var2show
+0017    0008    200A    	CALL MostrarDisplay
+0018    0009    2806    	GOTO Inicio
+0019    000A            
+0020    000A            
+0021    000A            
+0022    000A            MOSTRARDISPLAY	
+0023    000A    1C22    	BTFSS var2show, 0		; SALTA LÍNEA SI PRIMER BIT ES 1
+0024    000B    280D    	GOTO BITXXX0		; SI PRIMER BIT ES 0
+0025    000C    2810    	GOTO BITXXX1		; SI PRIMER BIT ES 1	
+0026    000D            	
+0027    000D            ; PRIMER BIT ES 0
+0028    000D            BITXXX0
+0029    000D    1CA2    	BTFSS var2show, 1	; SALTA LÍNEA SI SEGUNDO BIT ES 1
+0030    000E    2813    	GOTO BITXX00		; 00
+0031    000F    2816    	GOTO BITXX10		; 10
+0032    0010            ; PRIMER BIT ES 1
+0033    0010            BITXXX1
+0034    0010    1CA2    	BTFSS var2show, 1	; SALTA SI SEGUNDO BIT ES 1
+0035    0011    2819    	GOTO BITXX01		; 01
+0036    0012    281C    	GOTO BITXX11		; 11
+0037    0013            ;00
+0038    0013            BITXX00
+0039    0013    1D22    	BTFSS var2show, 2	; SALTA LÍNEA SI TERCER BIT ES 1
+0040    0014    281F    	GOTO BITX000		; 000
+0041    0015    2831    	GOTO BITX100		; 100		-> 4	0110011
+0042    0016            ;10
+0043    0016            BITXX10
+0044    0016    1D22    	BTFSS var2show, 2	; SALTA LÍNEA SI TERCER BIT ES 1
+0045    0017    282B    	GOTO BITX010		; 010		-> 2	1101101
+0046    0018    2839    	GOTO BITX110		; 110		-> 6	1011111
+0047    0019            	
+0048    0019            ;01
+0049    0019            BITXX01
+0050    0019    1D22    	BTFSS var2show, 2	; SALTA LÍNEA SI TERCER BIT ES 1
+0051    001A    2822    	GOTO BITX001		; 001		
+0052    001B    2835    	GOTO BITX101		; 101		-> 5	1011011
+0053    001C            	
+0054    001C            ;11
+0055    001C            BITXX11
+0056    001C    1D22    	BTFSS var2show, 2	; SALTA LÍNEA SI TERCER BIT ES 1
+0057    001D    282E    	GOTO BITX011		; 011		-> 3	1111001
+0058    001E    283C    	GOTO BITX111		; 111		-> 7	1110000
+0059    001F            		
+0060    001F            ;000
+0061    001F            BITX000
+0062    001F    1DA2    	BTFSS	var2show, 3	; SALTA LÍNEA SI CUARTO BIT ES 1
+0063    0020    2825    	GOTO BIT0000	; 0000		-> 0		1111110
+0064    0021    2840    	GOTO BIT1000	; 1000		-> 8		1111111
+0065    0022            	
+0066    0022            ;001
+0067    0022            BITX001
+0068    0022    1DA2    	BTFSS var2show, 3	; SALTA LÍNEA SI CUARTO BIT ES 1
+0069    0023    2828    	GOTO BIT0001	; 0001		-> 1		0110000
+0070    0024    2844    	GOTO BIT1001	; 1001		-> 9		0001100
+0071    0025            	
+0072    0025            	
+0073    0025            ; #0
+0074    0025            BIT0000
+0075    0025    3081    	MOVLW	B'10000001' ; EN W SE ENCUENTRA 1111110
+0076    0026    00A3    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0077    0027    2847    	GOTO DISPLAY
+0078    0028            	
+0079    0028            ; #1
+0080    0028            BIT0001
+0081    0028    30E7    	MOVLW	B'11100111' ; EN W SE ENCUENTRA 0110000
+0082    0029    00A3    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0083    002A    2847    	GOTO DISPLAY
+0084    002B            	
+0085    002B            ; #2
+0086    002B            BITX010
+0087    002B    3049    	MOVLW	B'01001001' ; EN W SE ENCUENTRA 1101101
+0088    002C    00A3    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0089    002D    2847    	GOTO DISPLAY
+0090    002E            	
+0091    002E            ; #3
+0092    002E            BITX011
+0093    002E    3043    	MOVLW	B'01000011'
+0094    002F    00A3    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0095    0030    2847    	GOTO DISPLAY
+0096    0031            	
+0097    0031            ; #4
+0098    0031            BITX100
+0099    0031    3027    	MOVLW	B'00100111'
+0100    0032    00A3    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0101    0033    2847    	GOTO DISPLAY
+0102    0034    0008    	RETURN
+0103    0035            ; #5
+0104    0035            BITX101
+0105    0035    3013    	MOVLW	B'00010011'
+0106    0036    00A3    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0107    0037    2847    	GOTO DISPLAY
+0108    0038    0008    	RETURN
+0109    0039            ; #6
+0110    0039            BITX110
+0111    0039    3011    	MOVLW	B'00010001'
+0112    003A    00A3    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0113    003B    2847    	GOTO DISPLAY
+0114    003C            	
+0115    003C            ; #7
+0116    003C            BITX111
+0117    003C    30C7    	MOVLW	B'11000111'
+0118    003D    00A3    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0119    003E    2847    	GOTO DISPLAY
+0120    003F    0008    	RETURN
+0121    0040            ; #8
+0122    0040            BIT1000
+0123    0040    3001    	MOVLW	B'00000001' ; EN W SE ENCUENTRA 1111111
+0124    0041    00A3    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0125    0042    2847    	GOTO DISPLAY
+0126    0043    0008    	RETURN
+0127    0044            ; #9
+0128    0044            BIT1001
+0129    0044    3003    	MOVLW	B'00000011' ; EN W SE ENCUENTRA 0001100
+0130    0045    00A3    	MOVWF	DATO		; DE W A F LE MOVEMOS F
+0131    0046    2847    	GOTO DISPLAY
+0132    0047            	
+0133    0047            
+0134    0047            DISPLAY
+0135    0047    0823    	MOVF	DATO, W
+0136    0048    0087    	MOVWF	PORTC	
+0137    0049    0008    	RETURN
+0138    004A            ;;;;;;; FINALIZA MOSTRAR DISPLAY ;;;;;;;;;
+---------------------------------------------
+Number of errors = 0

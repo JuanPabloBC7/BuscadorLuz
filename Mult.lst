@@ -1,0 +1,36 @@
+---------------------------------------------
+PIC ASSEMBLER LISTING
+Line    Address Opcode  Instruction
+---------------------------------------------
+0001    0000            multiplicando equ 0x24
+0002    0000            multiplicador equ 0x25
+0003    0000            resultmult    equ 0x26
+0004    0000            tmp1	      equ 0x27
+0005    0000            
+0006    0000            START
+0007    0000    3003    	MOVLW	d'3'
+0008    0001    00A4    	MOVWF	multiplicando
+0009    0002            
+0010    0002    3004    	MOVLW	d'4'
+0011    0003    00A5    	MOVWF	multiplicador	
+0012    0004            
+0013    0004    0824    	MOVF multiplicando, w
+0014    0005    00A7    	MOVWF tmp1
+0015    0006            
+0016    0006    3000    	MOVLW 0
+0017    0007    00A6    	MOVWF resultmult
+0018    0008            Inicio
+0019    0008    200A    	CALL IniciaMult
+0020    0009            Infinito
+0021    0009    2809    	GOTO Infinito
+0022    000A            
+0023    000A            
+0024    000A            
+0025    000A            IniciaMult
+0026    000A    0825    	MOVF	multiplicador, W
+0027    000B    07A6    	ADDWF	resultmult, 1
+0028    000C    0BA7    	DECFSZ	tmp1, 1
+0029    000D    280A    	GOTO IniciaMult
+0030    000E    0008    	RETURN
+---------------------------------------------
+Number of errors = 0
